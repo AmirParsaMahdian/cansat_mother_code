@@ -1,4 +1,4 @@
-This is the ultimate code for aour CanSat.
+This is the ultimate code for our CanSat.
 
 It contains codes for GY-80 , NEO 6M , SI7021.
 
