@@ -270,6 +270,14 @@ int registerRead(int bus, unsigned char address, unsigned char reg)
 		read(bus, data, 1);
 		return (int16_t)data[0];
 	}
+	
+	// ML8511 UV
+	if(address == 0x08)
+	{
+		int data[1]={0};
+		read(bus, data, 1);
+		return data[0];
+	}
 }
 
 
