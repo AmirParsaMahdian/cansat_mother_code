@@ -141,6 +141,8 @@ int main()
 		//cout<< "Speed: ";
 		strRead(bus, 5, log);
 		
+		cout<< "UV: ";
+		cout<< registerRead(bus, 0x08, 6)<< endl;
 		
 		// Print heading from HMC5883
 		cout<< "head = "<< hmc5883Read(bus, 'h')<< endl;
@@ -283,7 +285,7 @@ void strRead(int bus, char address, ofstream& log)
 	char data[10] = {};
   	read(bus, data, 7);
 	
-	///double n;
+	//double n;
 	//n=stod(data);
 	//cout<<"prescious: "n<<endl;
 	
