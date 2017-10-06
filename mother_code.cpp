@@ -127,22 +127,22 @@ int main()
 		
 		
 		//cout<< "Available sattelites: ";
-		strRead(bus, 1, log);
+		strRead(bus, log, 1, 1);
 		
 		//cout<< "Laitude: ";
-		strRead(bus, 2, log);
+		strRead(bus, log, 2, 9);
 		
 		//cout<< "Longitude: ";
-		strRead(bus, 3, log);
+		strRead(bus, log, 3, 9);
 		
 		//cout<< "Altitide: ";
-		strRead(bus, 4, log);
+		strRead(bus, log, 4, 7);
 		
 		//cout<< "Speed: ";
-		strRead(bus, 5, log);
+		strRead(bus, log, 5, 6);
 		
 		cout<< "UV: ";
-		strRead(bus, 6, log)
+		strRead(bus, log, 6, 4)
 		
 		// Print heading from HMC5883
 		cout<< "head = "<< hmc5883Read(bus, 'h')<< endl;
@@ -273,23 +273,23 @@ int registerRead(int bus, unsigned char address, unsigned char reg)
 }
 
 
-void strRead(int bus, char reg, ofstream& log)
+void strRead(int bus, ofstream& log, char reg, int len)
 {
     ioctl(bus,I2C_SLAVE,0x08);
     // append data to the log file
     log.open ("/home/final/log.txt", fstream::app);
     
-    char config[1]={reg};
-	write(bus,config,1);
+    char config[1] = {reg};
+	write(bus, config, 1);
     
 	char data[10] = {};
-  	read(bus, data, 7);
+  	read(bus, data, len);
 	
 	//double n;
 	//n=stod(data);
 	//cout<<"prescious: "n<<endl;
 	
-  	for(int i=0; i<10; i++)
+  	for(int i=0; i < len+1; i++)
   	{
 	  	if(data[0]==NULL)
 		{
@@ -301,13 +301,7 @@ void strRead(int bus, char reg, ofstream& log)
   		log<< data[i];
 	}
 	log<< "    ";
-	
-	if(address == 0x08)
-	{
-		char data[1]={0};
-		read(bus, data, 1);
-		return data[0];
-	}
+	cout<< endl;
 	
 	// close log file
 	log.close();
