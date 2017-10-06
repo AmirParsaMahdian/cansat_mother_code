@@ -142,7 +142,7 @@ int main()
 		strRead(bus, 5, log);
 		
 		cout<< "UV: ";
-		cout<< registerRead(bus, 0x08, 6)<< endl;
+		strRead(bus, 6, log)
 		
 		// Print heading from HMC5883
 		cout<< "head = "<< hmc5883Read(bus, 'h')<< endl;
@@ -270,24 +270,16 @@ int registerRead(int bus, unsigned char address, unsigned char reg)
 		read(bus, data, 1);
 		return (int16_t)data[0];
 	}
-	
-	// ML8511 UV
-	if(address == 0x08)
-	{
-		char data[1]={0};
-		read(bus, data, 1);
-		return (int16t)data[0];
-	}
 }
 
 
-void strRead(int bus, char address, ofstream& log)
+void strRead(int bus, char reg, ofstream& log)
 {
     ioctl(bus,I2C_SLAVE,0x08);
     // append data to the log file
     log.open ("/home/final/log.txt", fstream::app);
     
-    char config[1]={address};
+    char config[1]={reg};
 	write(bus,config,1);
     
 	char data[10] = {};
@@ -309,6 +301,13 @@ void strRead(int bus, char address, ofstream& log)
   		log<< data[i];
 	}
 	log<< "    ";
+	
+	if(address == 0x08)
+	{
+		char data[1]={0};
+		read(bus, data, 1);
+		return data[0];
+	}
 	
 	// close log file
 	log.close();
