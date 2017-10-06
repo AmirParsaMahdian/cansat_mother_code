@@ -23,7 +23,7 @@ void registerWrite(int bus, char address, char Register_to_set, char Data_for_se
 int registerRead(int bus, unsigned char address, unsigned char reg);
 
 // Reads the data coming form the microcontroller as strings using dtostrf function
-void strRead(int bus, char address, ofstream& log); 
+void strRead(int bus, ofstream& log, char address, int len); 
 
 
 //############## SI7021 ##############
