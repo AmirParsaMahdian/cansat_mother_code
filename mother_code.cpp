@@ -126,19 +126,19 @@ int main()
 		cout<<"Hum: "<< si7021Read(bus, 'h')<<endl;
 		
 		
-		//cout<< "Available sattelites: ";
+		cout<< "Available sattelites: ";
 		strRead(bus, log, 1, 1);
 		
-		//cout<< "Laitude: ";
+		cout<< "Laitude: ";
 		strRead(bus, log, 2, 9);
 		
-		//cout<< "Longitude: ";
+		cout<< "Longitude: ";
 		strRead(bus, log, 3, 9);
 		
-		//cout<< "Altitide: ";
+		cout<< "Altitide: ";
 		strRead(bus, log, 4, 7);
 		
-		//cout<< "Speed: ";
+		cout<< "Speed: ";
 		strRead(bus, log, 5, 6);
 		
 		cout<< "UV: ";
@@ -293,7 +293,7 @@ void strRead(int bus, ofstream& log, char reg, int len)
   	{
 	  	if(data[0]==NULL)
 		{
-			//cout<< "no data";
+			cout<< "no data";
 			log<< "no data";
 			break;
 		}
