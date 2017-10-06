@@ -276,7 +276,7 @@ int registerRead(int bus, unsigned char address, unsigned char reg)
 	{
 		int data[1]={0};
 		read(bus, data, 1);
-		return data[0];
+		return (int16t)data[0];
 	}
 }
 
