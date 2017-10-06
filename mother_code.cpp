@@ -142,7 +142,7 @@ int main()
 		strRead(bus, log, 5, 6);
 		
 		cout<< "UV: ";
-		strRead(bus, log, 6, 4)
+		strRead(bus, log, 6, 4);
 		
 		// Print heading from HMC5883
 		cout<< "head = "<< hmc5883Read(bus, 'h')<< endl;
