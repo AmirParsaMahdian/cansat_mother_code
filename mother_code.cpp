@@ -20,7 +20,7 @@ int i2cCreate ();
 void registerWrite(int bus, char address, char Register_to_set, char Data_for_set_to_register);
 
 // Reads Register and returns value in different ways depending on the sensor need
-int registerRead(int bus, unsigned char address, unsigned char reg);
+int registerRead(int bus, unsigned char address, unsigned char reg, int num, char *data);
 
 // Reads the data coming form the microcontroller as strings using dtostrf function
 void strRead(int bus, ofstream& log, char address, int len); 
@@ -210,66 +210,14 @@ void registerWrite(int bus, char address, char Register_to_set, char Data_for_se
 }
 
 
-int registerRead(int bus, unsigned char address, unsigned char reg)
+
+void registerRead(int bus, unsigned char address, unsigned char reg, int num, char *data)
 {
  	ioctl(bus, I2C_SLAVE, address);
     
 	char config[1]={reg};
 	write(bus, config, 1);
-	
-	// SI7021 Temperature
-	if(address == 0x40 && reg == 0xE3)
-	{
-		char data[2]={0};
-		read(bus, data, 2);
-		return  (int16_t)(data[0] << 8 | data[1]);
-	}
-	
-	// SI7021 Humidity
-	if(address == 0x40 && reg == 0xE5)
-	{
-		char data[2]={0};
-		read(bus, data, 2);
-		double Y_out1, Y_out2;
-		Y_out1 = (125*(data[0]/100)*25600)>>16;
-    	Y_out2 = (125*((data[0]%100)*256+data[1]))>>16;
-    	
-		return (float)(Y_out1 + Y_out2 - 6);
-	}
-	
-	// BMP085 Temperature
-	if(address == 0x77 && bmp == 0)
-	{
-		char data[2]={0};
-		read(bus, data, 2);
-  
-		return (int16_t)(data[0] << 8 | data[1]);
-	}
-	
-	// BMP085 Pressure
-	if(address == 0x77 && bmp == 1)
-	{		
-		char data[3]={0};
-		read(bus, data, 3);
-		
-		return (((int16_t) data[0] << 16) | ((int16_t) data[1] << 8) | (int16_t) data[2]) >> (8-OSS);
-	}
-	
-	// ADXL345 Accelometer
-	if(address == 0x53)
-	{
-		char data[2]={0};
-		read(bus, data, 2);
-		return (int16_t)(data[1] << 8 | data[0]);
-	}
-	
-	// L3G4200D Gyroscope
-	if(address == 0x69)
-	{
-		char data[1]={0};
-		read(bus, data, 1);
-		return (int16_t)data[0];
-	}
+	read(bus, data, num);
 }
 
 
@@ -283,7 +231,7 @@ void strRead(int bus, ofstream& log, char reg, int len)
 	write(bus, config, 1);
     
 	char data[10] = {};
-  	read(bus, data, len);
+  	read(bus, data, len+1);
 	
 	//double n;
 	//n=stod(data);
@@ -314,12 +262,20 @@ float si7021Read(int bus, char mode)
 	if ( mode == 't')
 	{
 		double temp_code;
-		temp_code = registerRead(bus, 0x40, 0xE3);
+		char data[2]={0};
+		registerRead(bus, 0x40, 0xE3, 2, *data);
+		temp_code = (int16_t)(data[0] << 8 | data[1]);
+		
 		return (float)(((175.72 * temp_code)/65536)-46.85);
 	}
 	if ( mode == 'h')
 	{
-		return (float)registerRead(bus, 0x40, 0xE5);
+		char data[2]={0};registerRead(bus, 0x40, 0xE5, 2, *data);
+		double Y_out1, Y_out2;
+		Y_out1 = (125*(data[0]/100)*25600)>>16;
+    	Y_out2 = (125*((data[0]%100)*256+data[1]))>>16;
+    	
+		return (float)(Y_out1 + Y_out2 - 6);
 	}
 }
 
@@ -327,17 +283,40 @@ float si7021Read(int bus, char mode)
 
 void setup_BMP085(int bus)
 {
-	ac1 = registerRead(bus, 0x77, 0xAA) ;
-	ac2 = registerRead(bus, 0x77, 0xAC) ;
-	ac3 = registerRead(bus, 0x77, 0xAE) ;
-	ac4 = registerRead(bus, 0x77, 0xB0) ;
-	ac5 = registerRead(bus, 0x77, 0xB2) ;
-	ac6 = registerRead(bus, 0x77, 0xB4) ;
-	b1 = registerRead(bus, 0x77, 0xB6) ;
-	b2 = registerRead(bus, 0x77, 0xB8) ;
-	mb = registerRead(bus, 0x77, 0xBA) ;
-	mc = registerRead(bus, 0x77, 0xBC) ;
-	md = registerRead(bus, 0x77, 0xBE) ;
+	data[2] = {0};
+	
+	registerRead(bus, 0x77, 0xAA, 2, *data)
+	ac1 = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xAC, 2, *data)
+	ac2 = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xAE, 2, *data)
+	ac3 = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xB0, 2, *data)
+	ac4 = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xB2, 2, *data)
+	ac5 = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xB4, 2, *data)
+	ac6 = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xB6, 2, *data)
+	b1 = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xB8, 2, *data)
+	b2 = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xBA, 2, *data)
+	mb = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xBC, 2, *data)
+	mc = (int16_t)(data[0] << 8 | data[1]);
+	
+	registerRead(bus, 0x77, 0xBE, 2, *data)
+	md = (int16_t)(data[0] << 8 | data[1]);
 }
 
 
@@ -346,16 +325,17 @@ float bmp085Read(int bus, char mode)
 	if ( mode == 't')
 	{
 		unsigned int ut;
-  
+		char data[2]={0};
+		
 		registerWrite(bus, 0x77, 0xF4, 0x2E);
 	  
 		// Wait at least 4.5ms
 		usleep(5000);
 	  
 		// Read two bytes from registers 0xF6 and 0xF7
-		bmp = 0; // Temperature mode
-		ut = registerRead(bus, 0x77, 0xF6);
-		
+		registerRead(bus, 0x77, 0xF6, 2, *data);
+		  
+		ut = (int16_t)(data[0] << 8 | data[1]);
 		long x1, x2;
 		x1 = (((long)ut - (long)ac6)*(long)ac5) >> 15;
 		x2 = ((long)mc << 11)/(x1 + md);
@@ -366,7 +346,9 @@ float bmp085Read(int bus, char mode)
 	
 	if ( mode == 'p')
 	{
-		unsigned long up = 0;
+		unsigned long up, b4, b7;
+		long x1, x2, x3, b3, b6, p;
+	    char data[3]={0};
 	    
 		// Write 0x34+(OSS<<6) into register 0xF4
 		// Request a pressure reading w/ oversampling setting
@@ -375,11 +357,9 @@ float bmp085Read(int bus, char mode)
 		// Wait for conversion, delay time dependent on OSS
 		usleep((2 + (3<<OSS))*1000);
 		
-		bmp = 1; // Pressure mode
-		up = registerRead(bus, 0x77, 0xF6);
+		registerRead(bus, 0x77, 0xF6, 3, *data);
 	
-	 	long x1, x2, x3, b3, b6, p;
-		unsigned long b4, b7;
+		up = (((int16_t) data[0] << 16) | ((int16_t) data[1] << 8) | (int16_t) data[2]) >> (8-OSS);
 		
 		b6 = b5 - 4000;
 		
@@ -626,12 +606,26 @@ double adxl345Read(int bus, char axis)
     //reads the raw data
     char reg[1] = {0x32};
     write(bus, reg, 1);
-    char data[6] = {9};
+	char data[2]={0};
+	
+    char data1[6] = {9};  // why is that?
     if (read(bus,data,6)!=6) cout<< "Problems with Accelerometer Data Readings"<< endl;
 	
-	if (axis == 'x')			return registerRead(bus, 0x53, 0x32)/256.0;
-	else if (axis =='y')		return registerRead(bus, 0x53, 0x34)/256.0;
-	else if (axis =='z')		return registerRead(bus, 0x53, 0x36)/256.0;
+	if (axis == 'x')
+	{
+		registerRead(bus, 0x53, 0x32, 2, *data);
+		return (int16_t)(data[1] << 8 | data[0])/256.0;
+	}
+	else if (axis =='y')
+	{
+		registerRead(bus, 0x53, 0x34, 2, *data);
+		return (int16_t)(data[1] << 8 | data[0])/256.0;
+	}
+	else if (axis =='z')
+	{
+		registerRead(bus, 0x53, 0x36, 2, *data);
+		return (int16_t)(data[1] << 8 | data[0])/256.0;
+	}
 }
 
 //############## L3G4200D ##############
@@ -660,24 +654,24 @@ void setup_L3G4200D(int bus)
 
 int l3g4200dRead(int bus, char axis)
 {
-	int MSB, LSB;
+	char MSB, LSB;
 	
 	if (axis == 'x')
 	{
-		MSB = registerRead(bus, 0x69, 0x29);
-		LSB = registerRead(bus, 0x69, 0x28);
+		registerRead(bus, 0x69, 0x29, 1, *MSB);
+		registerRead(bus, 0x69, 0x28, 1, *LSB);
 		return (int16_t)((MSB << 8) | LSB);
 	}
 	else if (axis == 'y')
 	{
-		MSB = registerRead(bus, 0x69, 0x2B);
-		LSB = registerRead(bus, 0x69, 0x2A);
+		registerRead(bus, 0x69, 0x2B, 1, *MSB);
+		registerRead(bus, 0x69, 0x2A, 1, *LSB);
 		return (int16_t)((MSB << 8) | LSB);
 	}
 	else if (axis == 'z')
 	{
-		MSB = registerRead(bus, 0x69, 0x2D);
-		LSB = registerRead(bus, 0x69, 0x2C);
+		registerRead(bus, 0x69, 0x2D, 1, *MSB);
+		registerRead(bus, 0x69, 0x2C, 1, *LSB);
 		return (int16_t)((MSB << 8) | LSB);
 	}
 }
