@@ -16,6 +16,12 @@
 
 using namespace std;
 
+//############## BMP085 ##############
+//const unsigned char OSS = 0;  // Oversampling Setting
+// Calibration values
+int ac1 ,ac2, ac3, b1, b2, mb, mc, md, b5;
+unsigned int ac4, ac5, ac6;
+
 //############## Main ##############
 
 int main()
@@ -63,23 +69,18 @@ int main()
 		cout<<"Hum: "<< si7021Read(bus, 'h')<<endl;
 		
 		
-		cout<< "Available sattelites: ";
-		strRead(bus, log, 1, 1);
+		cout<< "Available sattelites: "<< strRead(bus, log, 1, 1)<< endl;
 		
-		cout<< "Laitude: ";
-		strRead(bus, log, 2, 9);
+		cout<< "Laitude: "<< strRead(bus, log, 2, 9)<< endl;
 		
-		cout<< "Longitude: ";
-		strRead(bus, log, 3, 9);
+		cout<< "Longitude: "<< strRead(bus, log, 3, 9)<< endl;
 		
-		cout<< "Altitide: ";
-		strRead(bus, log, 4, 7);
+		cout<< "Altitide: "<< strRead(bus, log, 4, 7)<< endl;
 		
-		cout<< "Speed: ";
-		strRead(bus, log, 5, 6);
+		cout<< "Speed: "<< strRead(bus, log, 5, 6)<< endl;
 		
-		cout<< "UV: ";
-		strRead(bus, log, 6, 4);
+		cout<< "UV: "<< strRead(bus, log, 6, 4)<< endl;
+		
 		
 		// Print heading from HMC5883
 		cout<< "head = "<< hmc5883Read(bus, 'h')<< endl;
