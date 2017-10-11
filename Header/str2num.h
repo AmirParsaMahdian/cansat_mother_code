@@ -6,29 +6,39 @@
 #include <unistd.h>
 #include <math.h>
 #include <assert.h>
-#include <time.h>
-#include <iostream>
 #include <stdio.h>
-#include <fstream>
-#include "i2c.h"
 
 
-long double str2num(char *data, int len)
+double str2num(char *data, int len)
 {
-	long double a = 0;
+	double a = 0;
 	int dec = 0;
+	bool mark = 0;
+	
+	if (data[0] == 0)	return NULL; // detects if no data available
 	
 	for (int i=0; i<len; i++)
     {
+    	if(data[i] == 32) // ignore the empty spaces
+    	{
+    		continue;
+		}
+    	if(data[i] == 45) // detects the negative mark
+    	{
+    		mark = 1;
+    		continue;
+		}
     	if(data[i] == 46) // locates the decimal point
     	{
-    		dec = i+1;
+    		dec = len - i - 1;
     		continue;
 		}
 	    a = a * 10;
     	a = a + (data[i] - 48);
 	}
 	
-	a = a / pow(10,len-dec);
+	if (mark == 1) a = a * -1;
+	a = a / pow(10,dec);
+	
 	return a;
 }
