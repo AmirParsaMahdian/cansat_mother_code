@@ -15,6 +15,10 @@
 
  
 //############## BMP085 ##############
+const unsigned char OSS = 0;  // Oversampling Setting
+// Calibration values
+extern int ac1 ,ac2, ac3, b1, b2, mb, mc, md, b5;
+extern unsigned int ac4, ac5, ac6;
 
 // Stores all of the bmp085's calibration values into global variables
 // Calibration values are required to calculate temp and pressure
