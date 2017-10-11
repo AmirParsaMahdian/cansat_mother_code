@@ -10,6 +10,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <fstream>
+#include "str2num.h"
 
 using namespace std;
 
@@ -49,7 +50,7 @@ void registerRead(int bus, unsigned char address, unsigned char reg, int num, ch
 }
 
 
-void strRead(int bus, ofstream& log, char reg, int len)
+double strRead(int bus, ofstream& log, char reg, int len)
 {
     ioctl(bus,I2C_SLAVE,0x08);
     // append data to the log file
@@ -58,28 +59,10 @@ void strRead(int bus, ofstream& log, char reg, int len)
     char config[1] = {reg};
 	write(bus, config, 1);
     
-	char data[10] = {};
+    char *data;
+	data = new char[10];
   	read(bus, data, len);
-	
-	//double n;
-	//n=stod(data);
-	//cout<<"prescious: "n<<endl;
-	
-  	for(int i=0; i < len; i++)
-  	{
-	  	if(data[0]==NULL)
-		{
-			cout<< "no data";
-			log<< "no data";
-			break;
-		}
-  		cout<< data[i];
-  		log<< data[i];
-	}
-	log<< "    ";
-	cout<< endl;
-	
-	// close log file
-	log.close();
+  	
+	return str2num(data, len);
 }
 
