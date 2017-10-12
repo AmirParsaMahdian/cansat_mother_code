@@ -13,9 +13,9 @@ using namespace std;
 
 //############## i2c functions ##############
 
+// Create the I2C bus
 int i2cCreate ()
 {
-	// Create I2C bus
 	int file;
 	char *bus = "/dev/i2c-0";
 	if ((file = open(bus, O_RDWR)) < 0) 
@@ -23,10 +23,11 @@ int i2cCreate ()
 		cout<< "Failed to open the bus."<< endl;
 		exit(1);
 	}
+	
 	return file;
 }
 
-
+// Writes data to a specified register
 void registerWrite(int bus, char address, char Register_to_set, char Data_for_set_to_register)
 {
 	ioctl(bus, I2C_SLAVE, address);
@@ -35,7 +36,7 @@ void registerWrite(int bus, char address, char Register_to_set, char Data_for_se
 	write(bus, config, 2);
 }
 
-
+// Reads data from a specified register
 void registerRead(int bus, unsigned char address, unsigned char reg, int num, char *data)
 {
  	ioctl(bus, I2C_SLAVE, address);
@@ -46,8 +47,8 @@ void registerRead(int bus, unsigned char address, unsigned char reg, int num, ch
 	read(bus, data, num);
 }
 
-
-double strRead(int bus, ofstream& log, char reg, int len)
+// Reads data form the microcontroller as strings and convert them to doubles
+double strRead(int bus, unsigned char reg, int len)
 {
     ioctl(bus,I2C_SLAVE,0x08);
     
@@ -60,4 +61,5 @@ double strRead(int bus, ofstream& log, char reg, int len)
   	
 	return str2num(data, len);
 }
+
 
