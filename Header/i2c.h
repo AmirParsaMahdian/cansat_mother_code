@@ -4,12 +4,9 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <math.h>
 #include <assert.h>
-#include <time.h>
 #include <iostream>
 #include <stdio.h>
-#include <fstream>
 #include "str2num.h"
 
 using namespace std;
@@ -23,7 +20,7 @@ int i2cCreate ()
 	char *bus = "/dev/i2c-0";
 	if ((file = open(bus, O_RDWR)) < 0) 
 	{
-		cout<< "Failed to open the bus."<< endl;;
+		cout<< "Failed to open the bus."<< endl;
 		exit(1);
 	}
 	return file;
@@ -39,13 +36,13 @@ void registerWrite(int bus, char address, char Register_to_set, char Data_for_se
 }
 
 
-
 void registerRead(int bus, unsigned char address, unsigned char reg, int num, char *data)
 {
  	ioctl(bus, I2C_SLAVE, address);
     
 	char config[1]={reg};
 	write(bus, config, 1);
+	
 	read(bus, data, num);
 }
 
@@ -53,8 +50,6 @@ void registerRead(int bus, unsigned char address, unsigned char reg, int num, ch
 double strRead(int bus, ofstream& log, char reg, int len)
 {
     ioctl(bus,I2C_SLAVE,0x08);
-    // append data to the log file
-    log.open ("/home/final/log.txt", fstream::app);
     
     char config[1] = {reg};
 	write(bus, config, 1);
