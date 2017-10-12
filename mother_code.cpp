@@ -69,17 +69,17 @@ int main()
 		cout<<"Hum: "<< si7021Read(bus, 'h')<<endl;
 		
 		
-		cout<< "Available sattelites: "<< strRead(bus, log, 1, 1)<< endl;
+		cout<< "Available sattelites: "<< strRead(bus, 1, 1)<< endl;
 		
-		cout<< "Laitude: "<< strRead(bus, log, 2, 9)<< endl;
+		cout<< "Laitude: "<< strRead(bus, 2, 9)<< endl;
 		
-		cout<< "Longitude: "<< strRead(bus, log, 3, 9)<< endl;
+		cout<< "Longitude: "<< strRead(bus, 3, 9)<< endl;
 		
-		cout<< "Altitide: "<< strRead(bus, log, 4, 7)<< endl;
+		cout<< "Altitide: "<< strRead(bus, 4, 7)<< endl;
 		
-		cout<< "Speed: "<< strRead(bus, log, 5, 6)<< endl;
+		cout<< "Speed: "<< strRead(bus, 5, 6)<< endl;
 		
-		cout<< "UV: "<< strRead(bus, log, 6, 4)<< endl;
+		cout<< "UV: "<< strRead(bus, 6, 4)<< endl;
 		
 		
 		// Print heading from HMC5883
