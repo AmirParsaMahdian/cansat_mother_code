@@ -247,50 +247,29 @@ void setup_HMC5883(int bus)
 // if select_output == z return raw z 
 // if select_output == h return head angle
 float hmc5883Read(int bus, char select_output)
-{			
-	ioctl(bus, I2C_SLAVE, 0x1E);
+{
 	// Read 6 bytes of data from register(0x03)
 	// xMag msb, xMag lsb, zMag msb, zMag lsb, yMag msb, yMag lsb
-	char reg[1] = {0x03};
-	write(bus, reg, 1);
-	char data[6] ={0};
-		
-	int xMag;
-	int yMag;
-	int zMag;
-	float heading=0;
-	if(read(bus, data, 6) != 6)
-	{
-		cout<< "Error : Input/output Error"<< endl;
-	}
-	else
-	{
-		// Convert the data
-		xMag = (data[0] * 256 + data[1]);
-		if(xMag > 32767)
-		{
-			xMag -= 65536;
-		}
+	char *data;
+	data = new char[6];
 	
-		zMag = (data[2] * 256 + data[3]);
-		if(zMag > 32767) 
-		{
-			zMag -= 65536;
-		}
+	registerRead(bus, 0x1E, 0x03, 6, data);
 	
-		yMag = (data[4] * 256 + data[5]);
-		if(yMag > 32767) 
-		{
-			yMag -= 65536;
-		}
+	int xMag, yMag, zMag;
+	float heading = 0;
 	
-		// Output raw data to screen
-		//for debug uncommment it
-		//printf("Magnetic field in X-Axis : %d \n", xMag);
-		//printf("Magnetic field in Y-Axis : %d \n", yMag);
-		//printf("Magnetic field in Z-Axis : %d \n", zMag);
-
-	}
+	// Convert the data
+	xMag = (int16_t)(data[0]<<8 | data[1]);
+	
+	zMag = (int16_t)(data[2]<<8 | data[3]);
+	
+	yMag = (int16_t)(data[4]<<8 | data[5]);
+	
+	// Output raw data to screen
+	//for debug uncommment it
+	//printf("Magnetic field in X-Axis : %d \n", xMag);
+	//printf("Magnetic field in Y-Axis : %d \n", yMag);
+	//printf("Magnetic field in Z-Axis : %d \n", zMag);
 		
 	//calculate head of sensor
 	heading = 180 * atan2(yMag,xMag)/3.141592;
